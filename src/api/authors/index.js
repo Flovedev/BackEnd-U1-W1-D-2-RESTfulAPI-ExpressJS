@@ -37,12 +37,23 @@ router.post("/", (req, res) => {
   };
 
   const authorsArray = JSON.parse(fs.readFileSync(authorsJSONPath));
+  const checkEmail = authorsArray.some((e) => e.email === req.body.email);
 
-  authorsArray.push(newAuthor);
+  if (checkEmail === true) {
+    res.send("This email already exist, use a different one.");
+  } else {
+    authorsArray.push(newAuthor);
 
-  fs.writeFileSync(authorsJSONPath, JSON.stringify(authorsArray));
+    fs.writeFileSync(authorsJSONPath, JSON.stringify(authorsArray));
 
-  res.status(201).send({ ID: newAuthor.ID });
+    res.status(201).send({ ID: newAuthor.ID });
+  }
+
+  // checkEmail === true ? res.status(404) : authorsArray.push(newAuthor);
+
+  // fs.writeFileSync(authorsJSONPath, JSON.stringify(authorsArray));
+
+  // res.status(201).send({ ID: newAuthor.ID });
 });
 
 router.put("/:id", (req, res) => {
