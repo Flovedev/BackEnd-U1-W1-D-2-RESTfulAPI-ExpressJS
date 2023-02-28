@@ -10,7 +10,7 @@ const authorsJSONPath = join(
   dirname(fileURLToPath(import.meta.url)),
   "authors.json"
 );
-console.log(authorsJSONPath);
+// console.log(authorsJSONPath);
 
 router.get("/", (req, res) => {
   const fileContentAsBuffer = fs.readFileSync(authorsJSONPath);
