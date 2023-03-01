@@ -1,0 +1,23 @@
+[
+  {
+    "_id": "SERVER GENERATED ID",
+    "category": "ARTICLE CATEGORY",
+    "title": "ARTICLE TITLE",
+    "cover": "ARTICLE COVER (IMAGE LINK)",
+    "readTime": { "value": 2, "unit": "minute" },
+    "author": { "name": "AUTHOR AVATAR NAME", "avatar": "AUTHOR AVATAR LINK" },
+    "content": "HTML",
+    "createdAt": "NEW DATE"
+  },
+  {
+    "category": "Testing category",
+    "title": "Testing article",
+    "cover": "nolinklol",
+    "readTime": { "value": 3, "unit": "minute" },
+    "author": { "name": "AUTHOR test", "avatar": "AVATAR nolink" },
+    "content": "HTML",
+    "id": "16jq8xclepqqlk4",
+    "createdAt": "2023-03-01T13:56:04.131Z",
+    "undatedAt": "2023-03-01T13:56:04.131Z"
+  }
+]
