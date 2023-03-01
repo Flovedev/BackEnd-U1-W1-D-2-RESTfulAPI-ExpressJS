@@ -53,7 +53,46 @@ blogsRouter.post("/", checkBlogsSchema, triggerBadRequest, (req, res) => {
 
   res.status(201).send({ id: newBlog.id });
 });
-blogsRouter.put("/:id", (req, res) => {});
-blogsRouter.delete("/:id", (req, res) => {});
+blogsRouter.put("/:id", (req, res) => {
+  try {
+    const blogsArray = getBlogs();
+    const index = blogsArray.findIndex((e) => e.id === req.params.id);
+    if (index !== -1) {
+      const oldBlog = blogsArray[index];
+      const updatedBlog = { ...oldBlog, ...req.body, updatedAt: new Date() };
+
+      blogsArray[index] = updatedBlog;
+
+      writeBlogs(blogsArray);
+
+      res.send(updatedBlog);
+    } else {
+      next(
+        createHttpError(404, `Blog with the id: ${req.params.id} not found.`)
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+blogsRouter.delete("/:id", (req, res) => {
+  try {
+    const blogsArray = getBlogs();
+
+    const remainingBlogs = blogsArray.filter((e) => e.id !== req.params.id);
+
+    if (blogsArray.length !== remainingBlogs.length) {
+      writeBlogs(remainingBlogs);
+
+      res.status(204).send("Blog deleted");
+    } else {
+      next(
+        createHttpError(404, `Blog with the id: ${req.params.id} not found.`)
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default blogsRouter;
