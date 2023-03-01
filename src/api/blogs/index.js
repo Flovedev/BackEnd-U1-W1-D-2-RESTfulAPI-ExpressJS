@@ -23,26 +23,30 @@ blogsRouter.get("/", (req, res, next) => {
     next(error);
   }
 });
+
 blogsRouter.get("/:id", (req, res, next) => {
   try {
     const blogsArray = getBlogs();
 
-    const foundBlog = blogsArray.find((e) => e.id === req.params.id);
+    const foundBlog = blogsArray.find((e) => e._id === req.params.id);
     if (foundBlog) {
       res.send(foundBlog);
     } else {
       next(
-        createHttpError(404, `Blog with the id: ${req.params.id} not found!`)
+        //   createHttpError(404, `Blog with the id: ${req.params.id} not found!`)
+        res.status(404).send(`Blog with the id: ${req.params.id} not found.`)
       );
+      //   res.status(404).send(`Blog with the id: ${req.params.id} not found.`);
     }
   } catch (error) {
     next(error);
   }
 });
+
 blogsRouter.post("/", checkBlogsSchema, triggerBadRequest, (req, res) => {
   const newBlog = {
     ...req.body,
-    id: uniqid(),
+    _id: uniqid(),
     createdAt: new Date(),
     undatedAt: new Date(),
   };
@@ -51,12 +55,13 @@ blogsRouter.post("/", checkBlogsSchema, triggerBadRequest, (req, res) => {
   blogsArray.push(newBlog);
   writeBlogs(blogsArray);
 
-  res.status(201).send({ id: newBlog.id });
+  res.status(201).send({ _id: newBlog._id });
 });
+
 blogsRouter.put("/:id", (req, res, next) => {
   try {
     const blogsArray = getBlogs();
-    const index = blogsArray.findIndex((e) => e.id === req.params.id);
+    const index = blogsArray.findIndex((e) => e._id === req.params.id);
     if (index !== -1) {
       const oldBlog = blogsArray[index];
       const updatedBlog = { ...oldBlog, ...req.body, updatedAt: new Date() };
@@ -68,27 +73,29 @@ blogsRouter.put("/:id", (req, res, next) => {
       res.send(updatedBlog);
     } else {
       next(
-        createHttpError(404, `Blog with the id: ${req.params.id} not found.`)
+        createHttpError(404, `Blog with the id: ${req.params._id} not found.`)
       );
     }
   } catch (error) {
     next(error);
   }
 });
+
 blogsRouter.delete("/:id", (req, res, next) => {
   try {
     const blogsArray = getBlogs();
 
-    const remainingBlogs = blogsArray.filter((e) => e.id !== req.params.id);
+    const remainingBlogs = blogsArray.filter((e) => e._id !== req.params.id);
 
     if (blogsArray.length !== remainingBlogs.length) {
       writeBlogs(remainingBlogs);
 
       res.status(204).send("Blog deleted");
     } else {
-      next(
-        createHttpError(404, `Blog with the id: ${req.params.id} not found.`)
-      );
+      //   next(
+      //     createHttpError(404, `Blog with the id: ${req.params.id} not found.`)
+      //   );
+      res.status(404).send(`Blog with the id: ${req.params.id} not found.`);
     }
   } catch (error) {
     next(error);

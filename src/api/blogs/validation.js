@@ -20,18 +20,18 @@ const blogsSchema = {
       errorMessage: "Cover link is a mandatory field and needs to be a string!",
     },
   },
-  // readTime: {
-  //     in: ["body"],
-  //     isArray: {
-  //       errorMessage: "Cover link is a mandatory field and needs to be a string!",
-  //     },
-  //   },
-  // author: {
-  //     in: ["body"],
-  //     isArray: {
-  //       errorMessage: "Cover link is a mandatory field and needs to be a string!",
-  //     },
-  //   },
+  readTime: {
+    in: ["body"],
+    isArray: {
+      errorMessage: "Cover link is a mandatory field and needs to be a string!",
+    },
+  },
+  author: {
+    in: ["body"],
+    isArray: {
+      errorMessage: "Cover link is a mandatory field and needs to be a string!",
+    },
+  },
   content: {
     in: ["body"],
     isString: {

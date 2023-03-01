@@ -19,7 +19,7 @@ export const unauthorizedHandler = (err, req, res, next) => {
 
 export const notFoundHandler = (err, req, res, next) => {
   if (err.status === 404) {
-    res.status(404).send({ sucess: false, message: err.message });
+    res.status(404).send({ success: false, message: err.message });
   } else {
     next(err);
   }

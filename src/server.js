@@ -8,7 +8,7 @@ import {
   genericErrorHandler,
   notFoundHandler,
   unauthorizedHandler,
-} from "./errosHandler.js";
+} from "./errorsHandler.js";
 
 const server = Express();
 const port = 3001;
@@ -29,7 +29,7 @@ const checkForUser = (req, res, next) => {
   }
 };
 
-// server.use(cors());
+server.use(cors());
 server.use(loggerMiddleware);
 server.use(checkForUser);
 server.use(Express.json());
