@@ -13,7 +13,25 @@ import {
 const server = Express();
 const port = 3001;
 
-server.use(cors());
+const loggerMiddleware = (req, res, next) => {
+  console.log(
+    `Request method ${req.method} -- url ${req.url} -- ${new Date()}`
+  );
+  req.user = "Flo";
+  next();
+};
+
+const checkForUser = (req, res, next) => {
+  if (req.user === "Flo") {
+    next();
+  } else {
+    res.status(401).send({ message: "Allow only for Flo" });
+  }
+};
+
+// server.use(cors());
+server.use(loggerMiddleware);
+server.use(checkForUser);
 server.use(Express.json());
 
 server.use("/authors", authorsRouter);

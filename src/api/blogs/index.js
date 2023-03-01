@@ -23,7 +23,7 @@ blogsRouter.get("/", (req, res, next) => {
     next(error);
   }
 });
-blogsRouter.get("/:id", (req, res) => {
+blogsRouter.get("/:id", (req, res, next) => {
   try {
     const blogsArray = getBlogs();
 
@@ -32,7 +32,7 @@ blogsRouter.get("/:id", (req, res) => {
       res.send(foundBlog);
     } else {
       next(
-        createHttpError(404, `Blog with the id:${req.params.id} not found!`)
+        createHttpError(404, `Blog with the id: ${req.params.id} not found!`)
       );
     }
   } catch (error) {
@@ -53,7 +53,7 @@ blogsRouter.post("/", checkBlogsSchema, triggerBadRequest, (req, res) => {
 
   res.status(201).send({ id: newBlog.id });
 });
-blogsRouter.put("/:id", (req, res) => {
+blogsRouter.put("/:id", (req, res, next) => {
   try {
     const blogsArray = getBlogs();
     const index = blogsArray.findIndex((e) => e.id === req.params.id);
@@ -75,7 +75,7 @@ blogsRouter.put("/:id", (req, res) => {
     next(error);
   }
 });
-blogsRouter.delete("/:id", (req, res) => {
+blogsRouter.delete("/:id", (req, res, next) => {
   try {
     const blogsArray = getBlogs();
 
