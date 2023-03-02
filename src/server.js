@@ -1,7 +1,8 @@
 import Express from "express";
 import listEndpoints from "express-list-endpoints";
-import authorsRouter from "./api/authors/index.js";
 import cors from "cors";
+import { join } from "path";
+import authorsRouter from "./api/authors/index.js";
 import blogsRouter from "./api/blogs/index.js";
 import {
   badRequestHandler,
@@ -12,26 +13,10 @@ import {
 
 const server = Express();
 const port = 3001;
+const publicFolderPath = join(process.cwd(), "./public");
 
-const loggerMiddleware = (req, res, next) => {
-  console.log(
-    `Request method ${req.method} -- url ${req.url} -- ${new Date()}`
-  );
-  req.user = "Flo";
-  next();
-};
-
-const checkForUser = (req, res, next) => {
-  if (req.user === "Flo") {
-    next();
-  } else {
-    res.status(401).send({ message: "Allow only for Flo" });
-  }
-};
-
+server.use(Express.static(publicFolderPath));
 server.use(cors());
-server.use(loggerMiddleware);
-server.use(checkForUser);
 server.use(Express.json());
 
 server.use("/authors", authorsRouter);

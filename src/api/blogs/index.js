@@ -1,42 +1,31 @@
 import Express from "express";
-import fs from "fs";
-import { fileURLToPath } from "url";
-import { dirname, join } from "path";
 import uniqid from "uniqid";
 import createHttpError from "http-errors";
 import { checkBlogsSchema, triggerBadRequest } from "./validation.js";
+import { getBlogs, writeBlogs } from "../../lib/fs-tools.js";
 
 const blogsRouter = Express.Router();
-const blogsJSONPath = join(
-  dirname(fileURLToPath(import.meta.url)),
-  "blogs.json"
-);
 
-const getBlogs = () => JSON.parse(fs.readFileSync(blogsJSONPath));
-const writeBlogs = (e) => fs.writeFileSync(blogsJSONPath, JSON.stringify(e));
-
-blogsRouter.get("/", (req, res, next) => {
+blogsRouter.get("/", async (req, res, next) => {
   try {
-    const blogs = getBlogs();
+    const blogs = await getBlogs();
     res.send(blogs);
   } catch (error) {
     next(error);
   }
 });
 
-blogsRouter.get("/:id", (req, res, next) => {
+blogsRouter.get("/:id", async (req, res, next) => {
   try {
-    const blogsArray = getBlogs();
+    const blogsArray = await getBlogs();
 
     const foundBlog = blogsArray.find((e) => e._id === req.params.id);
     if (foundBlog) {
       res.send(foundBlog);
     } else {
       next(
-        //   createHttpError(404, `Blog with the id: ${req.params.id} not found!`)
         res.status(404).send(`Blog with the id: ${req.params.id} not found.`)
       );
-      //   res.status(404).send(`Blog with the id: ${req.params.id} not found.`);
     }
   } catch (error) {
     next(error);
