@@ -21,7 +21,7 @@ authorsRouter.get("/:id", async (req, res, next) => {
       res.send(author);
     } else {
       next(
-        res.status(404).send(`Blog with the id: ${req.params.id} not found.`)
+        res.status(404).send(`Author with the id: ${req.params.id} not found.`)
       );
     }
   } catch (error) {
@@ -69,7 +69,7 @@ authorsRouter.put("/:id", async (req, res, next) => {
       res.send(updatedAuthor);
     } else {
       next(
-        res.status(404).send(`Blog with the id: ${req.params.id} not found.`)
+        res.status(404).send(`Author with the id: ${req.params.id} not found.`)
       );
     }
   } catch (error) {
@@ -81,12 +81,12 @@ authorsRouter.delete("/:id", async (req, res, next) => {
   try {
     const authorsArray = await getAuthors();
     const remainingAuthors = authorsArray.filter((e) => e.ID !== req.params.id);
-    if (condition) {
+    if (authorsArray.length !== remainingAuthors.length) {
       writeAuthors(remainingAuthors);
       res.status(204).send("Author deleted");
     } else {
       next(
-        res.status(404).send(`Blog with the id: ${req.params.id} not found.`)
+        res.status(404).send(`Author with the id: ${req.params.id} not found.`)
       );
     }
   } catch (error) {

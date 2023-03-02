@@ -1,22 +1,30 @@
 import Express from "express";
 import multer from "multer";
 import { extname } from "path";
-import { saveAuthorsAvatars } from "../../lib/fs-tools.js";
+import { saveAuthorsAvatars, getAuthors } from "../../lib/fs-tools.js";
 
-const filesRouter = Express.Router();
+const authorsFilesRouter = Express.Router();
 
-filesRouter.post("/", multer().single("avatar"), async (req, res, next) => {
-  try {
-    // const originalFileExtension = extname(req.file.originalname);
-    // const fileName = req.params.id + originalFileExtension;
-    // await saveAuthorsAvatars(fileName, req.file.buffer);
+authorsFilesRouter.post(
+  "/:id/uploadAvatar",
+  multer().single("avatar"),
+  async (req, res, next) => {
+    try {
+      const authorsArray = await getAuthors();
+      const author = authorsArray.find((e) => e.ID === req.params.id);
+      if (author) {
+        const originalFileExtension = extname(req.file.originalname);
+        const fileName = req.params.id + originalFileExtension;
+        await saveAuthorsAvatars(fileName, req.file.buffer);
 
-    await saveAuthorsAvatars(req.file.originalname, req.file.buffer);
-
-    res.send({ message: "file uploaded" });
-  } catch (error) {
-    next(error);
+        res.send({ message: "file uploaded" });
+      } else {
+        res.status(404).send(`Author with the id: ${req.params.id} not found.`);
+      }
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
-export default filesRouter;
+export default authorsFilesRouter;
