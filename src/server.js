@@ -4,6 +4,7 @@ import cors from "cors";
 import { join } from "path";
 import authorsRouter from "./api/authors/index.js";
 import blogsRouter from "./api/blogs/index.js";
+import filesRouter from "./api/authorsFiles/index.js";
 import {
   badRequestHandler,
   genericErrorHandler,
@@ -21,6 +22,7 @@ server.use(Express.json());
 
 server.use("/authors", authorsRouter);
 server.use("/blogs", blogsRouter);
+server.use("/testing", filesRouter);
 
 server.use(badRequestHandler);
 server.use(unauthorizedHandler);

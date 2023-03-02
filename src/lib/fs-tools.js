@@ -7,7 +7,7 @@ const { readJSON, writeJSON, writeFile } = fs;
 const dataFolderPath = join(dirname(fileURLToPath(import.meta.url)), "../data");
 const authorsJSONPath = join(dataFolderPath, "authors.json");
 const blogsJSONPath = join(dataFolderPath, "blogs.json");
-const authorsPublicFolderPath = join(process.cwd(), ".public/img/authors");
+const authorsPublicFolderPath = join(process.cwd(), "./public/img/authors");
 
 export const getAuthors = () => readJSON(authorsJSONPath);
 export const writeAuthors = (authorsArray) =>

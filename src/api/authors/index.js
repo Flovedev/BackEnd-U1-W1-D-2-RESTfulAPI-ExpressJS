@@ -13,7 +13,7 @@ authorsRouter.get("/", async (req, res, next) => {
   }
 });
 
-authorsRouter.get("/:id", async (req, res) => {
+authorsRouter.get("/:id", async (req, res, next) => {
   try {
     const authorsArray = await getAuthors();
     const author = authorsArray.find((e) => e.ID === req.params.id);
@@ -29,7 +29,7 @@ authorsRouter.get("/:id", async (req, res) => {
   }
 });
 
-authorsRouter.post("/", async (req, res) => {
+authorsRouter.post("/", async (req, res, next) => {
   try {
     const authorsArray = await getAuthors();
     const newAuthor = {
@@ -53,7 +53,7 @@ authorsRouter.post("/", async (req, res) => {
   }
 });
 
-authorsRouter.put("/:id", async (req, res) => {
+authorsRouter.put("/:id", async (req, res, next) => {
   try {
     const authorsArray = await getAuthors();
     const index = authorsArray.findIndex((e) => e.ID === req.params.id);
@@ -77,7 +77,7 @@ authorsRouter.put("/:id", async (req, res) => {
   }
 });
 
-authorsRouter.delete("/:id", async (req, res) => {
+authorsRouter.delete("/:id", async (req, res, next) => {
   try {
     const authorsArray = await getAuthors();
     const remainingAuthors = authorsArray.filter((e) => e.ID !== req.params.id);
