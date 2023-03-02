@@ -15,6 +15,8 @@ export const writeAuthors = (authorsArray) =>
   writeJSON(authorsJSONPath, authorsArray);
 export const getBlogs = () => readJSON(blogsJSONPath);
 export const writeBlogs = (blogsArray) => writeJSON(blogsJSONPath, blogsArray);
+export const writeComments = (commentsArray) =>
+  writeJSON(commentsJSONPath, commentsArray);
 
 export const saveAuthorsAvatars = (fileName, fileContentAsBuffer) =>
   writeFile(join(authorsPublicFolderPath, fileName), fileContentAsBuffer);

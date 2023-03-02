@@ -4,6 +4,7 @@
     "category": "Getting Started",
     "title": "From 'Hello World' to Getting Hired as Software Engineer: Epicode meets Mimo",
     "cover": "https://picsum.photos/800/400",
+    "comments": [],
     "readTime": {
       "value": 1,
       "unit": "minute"
@@ -20,6 +21,7 @@
     "category": "The W Pledge",
     "title": "Announcing The W Pledge",
     "cover": "https://picsum.photos/800/400",
+    "comments": [],
     "readTime": {
       "value": 2,
       "unit": "minute"
@@ -36,6 +38,7 @@
     "category": "Learnings and Tips",
     "title": "So you want to learn coding and become a software engineer? Here are some tips from those who've done it",
     "cover": "https://picsum.photos/800/400",
+    "comments": [],
     "readTime": {
       "value": 3,
       "unit": "minute"
@@ -52,6 +55,7 @@
     "category": "Student Stories",
     "title": "I was a salesman 6 months ago, and now I am a professional web developer",
     "cover": "https://picsum.photos/800/400",
+    "comments": [],
     "readTime": {
       "value": 2,
       "unit": "minute"
