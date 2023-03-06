@@ -6,6 +6,7 @@ import authorsRouter from "./api/authors/index.js";
 import blogsRouter from "./api/blogs/index.js";
 import authorsFilesRouter from "./api/authorsFiles/index.js";
 import blogsFilesRouter from "./api/blogsFiles/index.js";
+import createHttpError from "http-errors";
 import {
   badRequestHandler,
   genericErrorHandler,
@@ -22,11 +23,10 @@ server.use(Express.static(publicFolderPath));
 server.use(
   cors({
     origin: (currentOrigin, corsNext) => {
+      // corsNext(null, true);
       if (!currentOrigin || whitelist.indexOf(currentOrigin) !== -1) {
-        // origin is in the whitelist
         corsNext(null, true);
       } else {
-        // origin is not in the whitelist
         corsNext(
           createHttpError(
             400,
