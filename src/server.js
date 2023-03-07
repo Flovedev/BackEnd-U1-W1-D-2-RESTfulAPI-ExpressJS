@@ -13,8 +13,8 @@ import {
   notFoundHandler,
   unauthorizedHandler,
 } from "./errorsHandler.js";
-import dotenv from "dotenv";
-dotenv.config();
+// import dotenv from "dotenv";
+// dotenv.config();
 
 const server = Express();
 const port = process.env.PORT;
