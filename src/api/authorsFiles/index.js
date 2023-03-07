@@ -15,7 +15,7 @@ const cloudinaryUploader = multer({
 
 authorsFilesRouter.post(
   "/:id/uploadAvatar",
-  multer().single("avatar"),
+  // multer().single("avatar"),
   cloudinaryUploader,
   async (req, res, next) => {
     try {
