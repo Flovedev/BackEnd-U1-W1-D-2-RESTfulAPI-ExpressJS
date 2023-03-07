@@ -1,7 +1,10 @@
 import Express from "express";
+import createHttpError from "http-errors";
 import multer from "multer";
 import { extname } from "path";
+import { pipeline } from "stream";
 import { saveBlogsCovers, getBlogs } from "../../lib/fs-tools.js";
+import { getPDFRedeableStream } from "../../lib/pdf-tools.js";
 
 const blogsFilesRouter = Express.Router();
 
@@ -26,5 +29,28 @@ blogsFilesRouter.post(
     }
   }
 );
+
+blogsFilesRouter.get("/download/:id/pdf/", async (req, res, next) => {
+  try {
+    const blogsArray = await getBlogs();
+    const foundBlog = blogsArray.find((e) => e._id === req.params.id);
+
+    if (foundBlog) {
+      res.setHeader("Content-Disposition", "attachment; filename=example.pdf");
+      const source = getPDFRedeableStream(foundBlog);
+      const destination = res;
+
+      pipeline(source, destination, (err) => {
+        if (err) console.log(err);
+      });
+    } else {
+      next(
+        createHttpError(404, `Blog with the id: ${req.params._id} not found.`)
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default blogsFilesRouter;

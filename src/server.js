@@ -13,9 +13,11 @@ import {
   notFoundHandler,
   unauthorizedHandler,
 } from "./errorsHandler.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 const server = Express();
-const port = 3001;
+const port = process.env.PORT;
 const publicFolderPath = join(process.cwd(), "./public");
 const whitelist = [process.env.FE_DEV_URL, process.env.FE_PROD_URL];
 
@@ -52,4 +54,5 @@ server.use(genericErrorHandler);
 
 server.listen(port, () => {
   console.table(listEndpoints(server));
+  console.log(port);
 });
