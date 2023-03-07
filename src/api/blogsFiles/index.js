@@ -36,7 +36,10 @@ blogsFilesRouter.get("/download/:id/pdf/", async (req, res, next) => {
     const foundBlog = blogsArray.find((e) => e._id === req.params.id);
 
     if (foundBlog) {
-      res.setHeader("Content-Disposition", "attachment; filename=example.pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=${foundBlog.title}.pdf`
+      );
       const source = getPDFRedeableStream(foundBlog);
       const destination = res;
 
