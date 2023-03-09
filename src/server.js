@@ -6,6 +6,7 @@ import authorsRouter from "./api/authors/index.js";
 import blogsRouter from "./api/blogs/index.js";
 import authorsFilesRouter from "./api/authorsFiles/index.js";
 import blogsFilesRouter from "./api/blogsFiles/index.js";
+import csvRouter from "./api/CSV/index.js";
 import createHttpError from "http-errors";
 import {
   badRequestHandler,
@@ -44,6 +45,8 @@ server.use("/blogPosts", blogsRouter);
 
 server.use("/authors", authorsFilesRouter);
 server.use("/blogPosts", blogsFilesRouter);
+
+server.use("/csv", csvRouter);
 
 server.use(badRequestHandler);
 server.use(unauthorizedHandler);
