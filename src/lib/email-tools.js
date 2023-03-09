@@ -6,7 +6,7 @@ export const sendsRegistrationEmail = async (recipientAdress) => {
   const msg = {
     to: recipientAdress,
     from: process.env.SENDER_EMAIL_ADDRESS,
-    subject: "First email sent!",
+    subject: "Second email sent!",
     text: "testing",
     html: "<strong>Amo alla flamenco</strong>",
   };
