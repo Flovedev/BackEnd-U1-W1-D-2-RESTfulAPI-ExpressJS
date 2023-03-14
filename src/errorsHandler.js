@@ -1,10 +1,14 @@
+import mongoose from "mongoose";
+
 export const badRequestHandler = (err, req, res, next) => {
-  if (err.status === 400) {
+  if (err.status === 400 || err instanceof mongoose.Error.ValidationError) {
     res.status(400).send({
-      success: false,
       message: err.message,
-      errorList: err.errorList.map((e) => e.msg),
     });
+  } else if (err instanceof mongoose.Error.CastError) {
+    res
+      .status(400)
+      .send({ message: "You've sent a wrong _id in request params" });
   } else {
     next(err);
   }
@@ -12,14 +16,14 @@ export const badRequestHandler = (err, req, res, next) => {
 
 export const unauthorizedHandler = (err, req, res, next) => {
   if (err.status === 401) {
-    res.status(401).send({ success: false, message: err.message });
+    res.status(401).send({ message: err.message });
   } else {
   }
 };
 
 export const notFoundHandler = (err, req, res, next) => {
   if (err.status === 404) {
-    res.status(404).send({ success: false, message: err.message });
+    res.status(404).send({ message: err.message });
   } else {
     next(err);
   }
@@ -27,5 +31,5 @@ export const notFoundHandler = (err, req, res, next) => {
 
 export const genericErrorHandler = (err, req, res, next) => {
   console.log("Error:", err);
-  res.status(500).send({ success: false, message: "Error coming from us." });
+  res.status(500).send({ message: "Error coming from us." });
 };

@@ -14,9 +14,10 @@ import {
   notFoundHandler,
   unauthorizedHandler,
 } from "./errorsHandler.js";
+import mongoose from "mongoose";
 
 const server = Express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3001;
 const publicFolderPath = join(process.cwd(), "./public");
 const whitelist = [process.env.FE_DEV_URL, process.env.FE_PROD_URL];
 
@@ -53,7 +54,9 @@ server.use(unauthorizedHandler);
 server.use(notFoundHandler);
 server.use(genericErrorHandler);
 
-server.listen(port, () => {
-  console.table(listEndpoints(server));
-  console.log(port);
+mongoose.connect(process.env.MONGO_URL);
+mongoose.connection.on("connected", () => {
+  server.listen(port, () => {
+    console.table(listEndpoints(server));
+  });
 });
