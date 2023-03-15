@@ -16,6 +16,11 @@ const blogsSchema = new Schema(
       avatar: { type: String, requiered: true },
     },
     content: { type: String, requiered: true },
+    comments: [
+      {
+        comment: { type: String, requierd: true },
+      },
+    ],
   },
   { timestamps: true }
 );
