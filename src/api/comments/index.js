@@ -54,7 +54,6 @@ commentRouter.post("/:id", async (req, res, next) => {
 
     if (foundBlog) {
       const commentToInsert = new CommentsModel(req.body);
-      console.log(commentToInsert);
 
       const updatedBlog = await BlogsModel.findByIdAndUpdate(
         req.params.id,
