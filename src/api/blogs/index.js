@@ -30,7 +30,7 @@ blogsRouter.get("/:id", async (req, res, next) => {
 
 blogsRouter.post("/", async (req, res, next) => {
   try {
-    const newBlog = new BlogsModel(req.body);
+    const newBlog = new BlogsModel(req.body, { comments: [] });
     const { _id } = await newBlog.save();
 
     res.status(201).send({ NewBlog: _id });

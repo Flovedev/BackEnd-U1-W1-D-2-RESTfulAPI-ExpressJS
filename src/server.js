@@ -15,6 +15,7 @@ import {
   unauthorizedHandler,
 } from "./errorsHandler.js";
 import mongoose from "mongoose";
+import commentRouter from "./api/comments/index.js";
 
 const server = Express();
 const port = process.env.PORT || 3001;
@@ -41,13 +42,14 @@ server.use(
 );
 server.use(Express.json());
 
-server.use("/authors", authorsRouter);
+// server.use("/authors", authorsRouter);
 server.use("/blogPosts", blogsRouter);
+server.use("/blogPosts", commentRouter);
 
-server.use("/authors", authorsFilesRouter);
-server.use("/blogPosts", blogsFilesRouter);
+// server.use("/authors", authorsFilesRouter);
+// server.use("/blogPosts", blogsFilesRouter);
 
-server.use("/csv", csvRouter);
+// server.use("/csv", csvRouter);
 
 server.use(badRequestHandler);
 server.use(unauthorizedHandler);
