@@ -2,6 +2,7 @@ import Express from "express";
 import q2m from "query-to-mongo";
 import createHttpError from "http-errors";
 import BlogsModel from "./model.js";
+import AuthorsModel from "../authors/model.js";
 
 const blogsRouter = Express.Router();
 
@@ -14,7 +15,8 @@ blogsRouter.get("/", async (req, res, next) => {
     )
       .limit(mongoQuery.options.limit)
       .skip(mongoQuery.options.skip)
-      .sort(mongoQuery.options.sort);
+      .sort(mongoQuery.options.sort)
+      .populate({ path: "author", select: "name surname" });
     const total = await BlogsModel.countDocuments(mongoQuery.criteria);
 
     res.send({
@@ -35,7 +37,7 @@ blogsRouter.get("/:id", async (req, res, next) => {
       res.send(foundBlog);
     } else {
       next(
-        createHttpError(404, `Blog with the id: ${req.params._id} not found.`)
+        createHttpError(404, `Blog with the id: ${req.params.id} not found.`)
       );
     }
   } catch (error) {
@@ -45,10 +47,21 @@ blogsRouter.get("/:id", async (req, res, next) => {
 
 blogsRouter.post("/", async (req, res, next) => {
   try {
-    const newBlog = new BlogsModel(req.body);
-    const { _id } = await newBlog.save();
-
-    res.status(201).send({ NewBlog: _id });
+    const checkAuthor = await AuthorsModel.findById(req.body.author);
+    if (checkAuthor) {
+      const newBlog = new BlogsModel(req.body);
+      const { _id } = await newBlog.save();
+      const updateAuthor = await AuthorsModel.findByIdAndUpdate(
+        req.body.author,
+        { $push: { blogs: _id } },
+        { new: true, runValidators: true }
+      );
+      res.status(201).send({ NewBlog: _id, authorUpdated: updateAuthor });
+    } else {
+      next(
+        createHttpError(404, `Blog with the id: ${req.params.id} not found.`)
+      );
+    }
   } catch (error) {
     next(error);
   }
@@ -66,7 +79,7 @@ blogsRouter.put("/:id", async (req, res, next) => {
       res.send(updatedBlog);
     } else {
       next(
-        createHttpError(404, `Blog with the id: ${req.params._id} not found.`)
+        createHttpError(404, `Blog with the id: ${req.params.id} not found.`)
       );
     }
   } catch (error) {
@@ -84,6 +97,50 @@ blogsRouter.delete("/:id", async (req, res, next) => {
       next(
         createHttpError(404, `Blog with the id: ${req.params.id} not found.`)
       );
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
+blogsRouter.post("/:blogId/like/:authorId", async (req, res, next) => {
+  try {
+    const blogToLike = await BlogsModel.findById(req.params.blogId);
+    if (!blogToLike)
+      return next(
+        createHttpError(
+          404,
+          `Blog with the id: ${req.params.blogId} not found.`
+        )
+      );
+
+    const authorAboutLike = await AuthorsModel.findById(req.params.authorId);
+    if (!authorAboutLike)
+      return next(
+        createHttpError(
+          404,
+          `Author with the id: ${req.params.authorId} not found.`
+        )
+      );
+
+    const isLikedYet = await BlogsModel.findOne({
+      likes: req.params.authorId,
+    });
+
+    if (isLikedYet) {
+      const letsDislike = await BlogsModel.findByIdAndUpdate(
+        req.params.blogId,
+        { $pull: { likes: req.params.authorId } },
+        { new: true, runValidators: true }
+      );
+      res.send(letsDislike);
+    } else {
+      const letsLike = await BlogsModel.findByIdAndUpdate(
+        req.params.blogId,
+        { $push: { likes: req.params.authorId } },
+        { new: true, runValidators: true }
+      );
+      res.send(letsLike);
     }
   } catch (error) {
     next(error);

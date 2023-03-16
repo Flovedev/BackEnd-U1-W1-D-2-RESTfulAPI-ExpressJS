@@ -1,13 +1,23 @@
 import Express from "express";
-import uniqid from "uniqid";
-import { getAuthors, writeAuthors } from "../../lib/fs-tools.js";
+import createHttpError from "http-errors";
+import AuthorsModel from "./model.js";
+import q2m from "query-to-mongo";
 
 const authorsRouter = Express.Router();
 
 authorsRouter.get("/", async (req, res, next) => {
   try {
-    const authorsArray = await getAuthors();
-    res.send(authorsArray);
+    const mongoQuery = q2m(req.query);
+    const { authors, total } = await AuthorsModel.findAuthorsWithBlogs(
+      mongoQuery
+    );
+
+    res.send({
+      links: mongoQuery.links(process.env.MONGO_QUERY, total),
+      total,
+      numberOfPages: Math.ceil(total / mongoQuery.options.limit),
+      authors,
+    });
   } catch (error) {
     next(error);
   }
@@ -15,8 +25,7 @@ authorsRouter.get("/", async (req, res, next) => {
 
 authorsRouter.get("/:id", async (req, res, next) => {
   try {
-    const authorsArray = await getAuthors();
-    const author = authorsArray.find((e) => e.ID === req.params.id);
+    const author = await AuthorsModel.findById(req.params.id);
     if (author) {
       res.send(author);
     } else {
@@ -31,23 +40,10 @@ authorsRouter.get("/:id", async (req, res, next) => {
 
 authorsRouter.post("/", async (req, res, next) => {
   try {
-    const authorsArray = await getAuthors();
-    const newAuthor = {
-      ...req.body,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      ID: uniqid(),
-    };
-    const checkEmail = authorsArray.some((e) => e.email === req.body.email);
-    if (checkEmail === true) {
-      next(res.send("This email already exist, use a different one."));
-    } else {
-      authorsArray.push(newAuthor);
+    const newAuthor = new AuthorsModel(req.body);
+    const { _id } = await newAuthor.save();
 
-      await writeAuthors(authorsArray);
-
-      res.status(201).send("Author created!");
-    }
+    res.status(201).send({ NewAuthor: _id });
   } catch (error) {
     next(error);
   }
@@ -55,17 +51,13 @@ authorsRouter.post("/", async (req, res, next) => {
 
 authorsRouter.put("/:id", async (req, res, next) => {
   try {
-    const authorsArray = await getAuthors();
-    const index = authorsArray.findIndex((e) => e.ID === req.params.id);
-    if (index !== -1) {
-      const oldAuthor = authorsArray[index];
-      const updatedAuthor = {
-        ...oldAuthor,
-        ...req.body,
-        updatedAt: new Date(),
-      };
-      authorsArray[index] = updatedAuthor;
-      writeAuthors(authorsArray);
+    const updatedAuthor = await AuthorsModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (updatedAuthor) {
       res.send(updatedAuthor);
     } else {
       next(
@@ -79,11 +71,10 @@ authorsRouter.put("/:id", async (req, res, next) => {
 
 authorsRouter.delete("/:id", async (req, res, next) => {
   try {
-    const authorsArray = await getAuthors();
-    const remainingAuthors = authorsArray.filter((e) => e.ID !== req.params.id);
-    if (authorsArray.length !== remainingAuthors.length) {
-      writeAuthors(remainingAuthors);
-      res.status(204).send("Author deleted");
+    const deletedAuthor = await AuthorsModel.findByIdAndDelete(req.params.id);
+
+    if (deletedAuthor) {
+      res.status(204).send();
     } else {
       next(
         res.status(404).send(`Author with the id: ${req.params.id} not found.`)

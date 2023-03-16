@@ -11,16 +11,14 @@ const blogsSchema = new Schema(
       value: { type: Number, requiered: true },
       unit: { type: String, requiered: true },
     },
-    author: {
-      name: { type: String, requiered: true },
-      avatar: { type: String, requiered: true },
-    },
+    author: [{ type: Schema.Types.ObjectId, ref: "Author" }],
     content: { type: String, requiered: true },
     comments: [
       {
         comment: { type: String, requierd: true },
       },
     ],
+    likes: [{ type: Schema.Types.ObjectId, ref: "Likes" }],
   },
   { timestamps: true }
 );

@@ -42,7 +42,7 @@ server.use(
 );
 server.use(Express.json());
 
-// server.use("/authors", authorsRouter);
+server.use("/authors", authorsRouter);
 server.use("/blogPosts", blogsRouter);
 server.use("/blogPosts", commentRouter);
 
