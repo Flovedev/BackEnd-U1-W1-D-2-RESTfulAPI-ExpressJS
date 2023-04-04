@@ -151,8 +151,12 @@ blogsRouter.post("/:blogId/like/:authorId", async (req, res, next) => {
 
 blogsRouter.get("/me/stories", basicAuth, async (req, res, next) => {
   try {
-    const blogs = req.author.blogs;
-    res.send(blogs);
+    const allBlogs = await AuthorsModel.findById(req.author._id).populate({
+      path: "blogs",
+      select: "title cover readTime content",
+    });
+
+    res.send(allBlogs.blogs);
   } catch (error) {
     next(error);
   }
