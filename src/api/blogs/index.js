@@ -53,12 +53,15 @@ blogsRouter.post("/", async (req, res, next) => {
     if (checkAuthor) {
       const newBlog = new BlogsModel(req.body);
       const { _id } = await newBlog.save();
-      const updateAuthor = await AuthorsModel.findByIdAndUpdate(
-        req.body.author,
-        { $push: { blogs: _id } },
-        { new: true, runValidators: true }
-      );
-      res.status(201).send({ NewBlog: _id, authorUpdated: updateAuthor });
+      const allAuthors = await req.body.author.map((e) => {
+        AuthorsModel.findByIdAndUpdate(
+          e,
+          { $push: { blogs: _id } },
+          { new: true, runValidators: true }
+        );
+      });
+
+      res.status(201).send({ NewBlog: _id });
     } else {
       next(
         createHttpError(404, `Blog with the id: ${req.params.id} not found.`)
