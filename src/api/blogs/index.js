@@ -3,6 +3,8 @@ import q2m from "query-to-mongo";
 import createHttpError from "http-errors";
 import BlogsModel from "./model.js";
 import AuthorsModel from "../authors/model.js";
+import { basicAuth } from "../../lib/auth/basic.js";
+import { adminOnly } from "../../lib/auth/admin.js";
 
 const blogsRouter = Express.Router();
 
@@ -142,6 +144,15 @@ blogsRouter.post("/:blogId/like/:authorId", async (req, res, next) => {
       );
       res.send(letsLike);
     }
+  } catch (error) {
+    next(error);
+  }
+});
+
+blogsRouter.get("/me/stories", basicAuth, async (req, res, next) => {
+  try {
+    const blogs = req.author.blogs;
+    res.send(blogs);
   } catch (error) {
     next(error);
   }

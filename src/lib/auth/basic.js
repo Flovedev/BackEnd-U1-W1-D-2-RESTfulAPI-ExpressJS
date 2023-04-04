@@ -12,7 +12,6 @@ export const basicAuth = async (req, res, next) => {
     const credentials = atob(encodedCredentials);
     const [email, password] = credentials.split(":");
     const author = await AuthorsModel.checkCredentials(email, password);
-
     if (author) {
       req.author = author;
       next();
