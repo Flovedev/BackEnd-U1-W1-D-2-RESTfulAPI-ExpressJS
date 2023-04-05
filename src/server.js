@@ -10,6 +10,7 @@ import csvRouter from "./api/CSV/index.js";
 import createHttpError from "http-errors";
 import {
   badRequestHandler,
+  forbiddenErrorHandler,
   genericErrorHandler,
   notFoundHandler,
   unauthorizedHandler,
@@ -52,6 +53,7 @@ server.use("/blogPosts", commentRouter);
 // server.use("/csv", csvRouter);
 
 server.use(badRequestHandler);
+server.use(forbiddenErrorHandler);
 server.use(unauthorizedHandler);
 server.use(notFoundHandler);
 server.use(genericErrorHandler);
@@ -60,6 +62,6 @@ mongoose.connect(process.env.MONGO_URL);
 mongoose.connection.on("connected", () => {
   server.listen(port, () => {
     // console.table(listEndpoints(server));
-    console.log("Connected! WEY");
+    console.log(port, "Connected! WEY");
   });
 });
