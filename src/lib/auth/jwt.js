@@ -10,7 +10,7 @@ export const JWTAuthMiddleware = async (req, res, next) => {
       )
     );
   } else {
-    const accessToken = req.headers.authorization.replace("Baerer ", "");
+    const accessToken = req.headers.authorization.replace("Bearer ", "");
     try {
       const payload = await verifyAccessToken(accessToken);
 

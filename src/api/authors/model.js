@@ -40,6 +40,7 @@ authorsSchema.methods.toJSON = function () {
   delete currentAuthor.createdAt;
   delete currentAuthor.updatedAt;
   delete currentAuthor.__v;
+  delete currentAuthor.refreshToken;
   return currentAuthor;
 };
 
