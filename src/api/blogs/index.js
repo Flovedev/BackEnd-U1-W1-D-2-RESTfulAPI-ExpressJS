@@ -3,8 +3,8 @@ import q2m from "query-to-mongo";
 import createHttpError from "http-errors";
 import BlogsModel from "./model.js";
 import AuthorsModel from "../authors/model.js";
-import { basicAuth } from "../../lib/auth/basic.js";
 import { adminOnly } from "../../lib/auth/admin.js";
+import { JWTAuthMiddleware } from "../../lib/auth/jwt.js";
 
 const blogsRouter = Express.Router();
 
@@ -152,17 +152,22 @@ blogsRouter.post("/:blogId/like/:authorId", async (req, res, next) => {
   }
 });
 
-blogsRouter.get("/me/stories", basicAuth, async (req, res, next) => {
-  try {
-    const allBlogs = await AuthorsModel.findById(req.author._id).populate({
-      path: "blogs",
-      select: "title cover readTime content",
-    });
+blogsRouter.get(
+  "/me/stories",
+  JWTAuthMiddleware,
+  adminOnly,
+  async (req, res, next) => {
+    try {
+      const allBlogs = await AuthorsModel.findById(req.author._id).populate({
+        path: "blogs",
+        select: "title cover readTime content",
+      });
 
-    res.send(allBlogs.blogs);
-  } catch (error) {
-    next(error);
+      res.send(allBlogs.blogs);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 export default blogsRouter;

@@ -17,6 +17,7 @@ const authorsSchema = new Schema(
     },
     dateOfBirth: { type: Date, requiered: true },
     blogs: [{ type: Schema.Types.ObjectId, ref: "Blog" }],
+    refreshToken: { type: String },
   },
   { timestamps: true }
 );

@@ -2,12 +2,12 @@ import Express from "express";
 import createHttpError from "http-errors";
 import AuthorsModel from "./model.js";
 import q2m from "query-to-mongo";
-import { basicAuth } from "../../lib/auth/basic.js";
 import { adminOnly } from "../../lib/auth/admin.js";
+import { JWTAuthMiddleware } from "../../lib/auth/jwt.js";
 
 const authorsRouter = Express.Router();
 
-authorsRouter.get("/", basicAuth, adminOnly, async (req, res, next) => {
+authorsRouter.get("/", JWTAuthMiddleware, adminOnly, async (req, res, next) => {
   try {
     const authors = await AuthorsModel.find({});
     res.send(authors);
@@ -16,20 +16,27 @@ authorsRouter.get("/", basicAuth, adminOnly, async (req, res, next) => {
   }
 });
 
-authorsRouter.get("/:id", basicAuth, adminOnly, async (req, res, next) => {
-  try {
-    const author = await AuthorsModel.findById(req.params.id);
-    if (author) {
-      res.send(author);
-    } else {
-      next(
-        res.status(404).send(`Author with the id: ${req.params.id} not found.`)
-      );
+authorsRouter.get(
+  "/:id",
+  JWTAuthMiddleware,
+  adminOnly,
+  async (req, res, next) => {
+    try {
+      const author = await AuthorsModel.findById(req.params.id);
+      if (author) {
+        res.send(author);
+      } else {
+        next(
+          res
+            .status(404)
+            .send(`Author with the id: ${req.params.id} not found.`)
+        );
+      }
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 authorsRouter.post("/", async (req, res, next) => {
   try {
@@ -42,41 +49,55 @@ authorsRouter.post("/", async (req, res, next) => {
   }
 });
 
-authorsRouter.put("/:id", basicAuth, adminOnly, async (req, res, next) => {
-  try {
-    const updatedAuthor = await AuthorsModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
-
-    if (updatedAuthor) {
-      res.send(updatedAuthor);
-    } else {
-      next(
-        res.status(404).send(`Author with the id: ${req.params.id} not found.`)
+authorsRouter.put(
+  "/:id",
+  JWTAuthMiddleware,
+  adminOnly,
+  async (req, res, next) => {
+    try {
+      const updatedAuthor = await AuthorsModel.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true, runValidators: true }
       );
-    }
-  } catch (error) {
-    next(error);
-  }
-});
 
-authorsRouter.delete("/:id", basicAuth, adminOnly, async (req, res, next) => {
-  try {
-    const deletedAuthor = await AuthorsModel.findByIdAndDelete(req.params.id);
-
-    if (deletedAuthor) {
-      res.status(204).send();
-    } else {
-      next(
-        res.status(404).send(`Author with the id: ${req.params.id} not found.`)
-      );
+      if (updatedAuthor) {
+        res.send(updatedAuthor);
+      } else {
+        next(
+          res
+            .status(404)
+            .send(`Author with the id: ${req.params.id} not found.`)
+        );
+      }
+    } catch (error) {
+      next(error);
     }
-  } catch (error) {
-    next(error);
   }
-});
+);
+
+authorsRouter.delete(
+  "/:id",
+  JWTAuthMiddleware,
+  adminOnly,
+  async (req, res, next) => {
+    try {
+      const deletedAuthor = await AuthorsModel.findByIdAndDelete(req.params.id);
+
+      if (deletedAuthor) {
+        res.status(204).send();
+      } else {
+        next(
+          res
+            .status(404)
+            .send(`Author with the id: ${req.params.id} not found.`)
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 // authorsRouter.get("/me/stories", basicAuth, async (req, res, next) => {
 //   try {
