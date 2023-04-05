@@ -4,6 +4,10 @@ import AuthorsModel from "./model.js";
 import q2m from "query-to-mongo";
 import { adminOnly } from "../../lib/auth/admin.js";
 import { JWTAuthMiddleware } from "../../lib/auth/jwt.js";
+import {
+  createTokens,
+  verifyTokenAndCreateNewToken,
+} from "../../lib/auth/tools.js";
 
 const authorsRouter = Express.Router();
 
@@ -99,34 +103,34 @@ authorsRouter.delete(
   }
 );
 
-// authorsRouter.get("/me/stories", basicAuth, async (req, res, next) => {
-//   try {
-//     res.send(req.author);
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+authorsRouter.post("/login", async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const author = await AuthorsModel.checkCredentials(email, password);
 
-// authorsRouter.put("/me/stories", basicAuth, async (req, res, next) => {
-//   try {
-//     const updatedAuthor = await AuthorsModel.findByIdAndUpdate(
-//       req.author._id,
-//       req.body,
-//       { new: true, runValidators: true }
-//     );
-//     res.send(updatedAuthor);
-//   } catch (updatedAuthor) {
-//     next(error);
-//   }
-// });
+    if (author) {
+      const { accessToken, refreshToken } = await createTokens(author);
+      res.send({ accessToken, refreshToken });
+    } else {
+      next(createHttpError(401, "Credentials are not ok!"));
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
-// authorsRouter.delete("/me/stories", basicAuth, async (req, res, next) => {
-//   try {
-//     await AuthorsModel.findByIdAndDelete(req.author._id);
-//     res.status(204).send();
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+authorsRouter.post("/refreshTokens", async (req, res, next) => {
+  try {
+    const { currentRefreshToken } = req.body;
+
+    const { accessToken, refreshToken } = await verifyTokenAndCreateNewToken(
+      currentRefreshToken
+    );
+
+    res.send({ accessToken, refreshToken });
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default authorsRouter;

@@ -2,15 +2,15 @@ import jwt from "jsonwebtoken";
 import AuthorsModel from "../../api/authors/model.js";
 import createHttpError from "http-errors";
 
-export const createTokens = async (author) => {
+export const createTokens = async (user) => {
   const accessToken = await createAccessToken({
-    _id: author._id,
-    role: author.role,
+    _id: user._id,
+    role: user.role,
   });
-  const refreshToken = await createRefreshToken({ _id: author._id });
+  const refreshToken = await createRefreshToken({ _id: user._id });
 
-  author.refreshToken = refreshToken;
-  await author.save();
+  user.refreshToken = refreshToken;
+  await user.save();
 
   return { accessToken, refreshToken };
 };
@@ -20,7 +20,7 @@ export const createAccessToken = (payload) =>
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expriresIn: "15m" },
+      { expiresIn: "15m" },
       (err, token) => {
         if (err) reject(err);
         else resolve(token);

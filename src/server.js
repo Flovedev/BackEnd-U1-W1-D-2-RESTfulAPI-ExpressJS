@@ -59,6 +59,7 @@ server.use(genericErrorHandler);
 mongoose.connect(process.env.MONGO_URL);
 mongoose.connection.on("connected", () => {
   server.listen(port, () => {
-    console.table(listEndpoints(server));
+    // console.table(listEndpoints(server));
+    console.log("Connected! WEY");
   });
 });

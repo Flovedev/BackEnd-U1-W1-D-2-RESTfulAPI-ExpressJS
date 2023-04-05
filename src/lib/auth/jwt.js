@@ -17,7 +17,7 @@ export const JWTAuthMiddleware = async (req, res, next) => {
       req.author = { _id: payload._id, role: payload.role };
       next();
     } catch (error) {
-      console.log(error);
+      //   console.log(error);
       next(createHttpError(401, "Token not valid! Please log in again!"));
     }
   }
