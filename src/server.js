@@ -17,11 +17,15 @@ import {
 } from "./errorsHandler.js";
 import mongoose from "mongoose";
 import commentRouter from "./api/comments/index.js";
+import passport from "passport";
+import googleStragegy from "./lib/auth/googleOauth.js";
 
 const server = Express();
 const port = process.env.PORT || 3001;
 const publicFolderPath = join(process.cwd(), "./public");
 const whitelist = [process.env.FE_DEV_URL, process.env.FE_PROD_URL];
+
+passport.use("google", googleStragegy);
 
 server.use(Express.static(publicFolderPath));
 server.use(
@@ -42,6 +46,7 @@ server.use(
   })
 );
 server.use(Express.json());
+server.use(passport.initialize());
 
 server.use("/authors", authorsRouter);
 server.use("/blogPosts", blogsRouter);

@@ -7,7 +7,7 @@ const authorsSchema = new Schema(
   {
     name: { type: String, requiered: true },
     surname: { type: String, requiered: true },
-    password: { type: String, requiered: true },
+    password: { type: String, requiered: false },
     email: { type: String, requiered: true },
     role: {
       type: String,
@@ -15,9 +15,10 @@ const authorsSchema = new Schema(
       enum: ["Admin", "Author"],
       default: "Author",
     },
-    dateOfBirth: { type: Date, requiered: true },
+    dateOfBirth: { type: Date, requiered: false },
     blogs: [{ type: Schema.Types.ObjectId, ref: "Blog" }],
     refreshToken: { type: String },
+    googleId: { type: String },
   },
   { timestamps: true }
 );
