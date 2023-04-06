@@ -12,26 +12,26 @@ const googleStragegy = new GoogleStragegy(
     try {
       const { email, given_name, family_name, sub } = profile._json;
       console.log("PROFILE:", profile);
-      const author = await AuthorsModel.findOne({ email });
-      if (author) {
+      const user = await AuthorsModel.findOne({ email });
+      if (user) {
         const accessToken = await createAccessToken({
-          _id: author._id,
-          role: author.role,
+          _id: user._id,
+          role: user.role,
         });
         passportNext(null, { accessToken });
       } else {
-        const newAuthor = new AuthorsModel({
+        const newUser = new AuthorsModel({
           name: given_name,
           surname: family_name,
           email,
           googleId: sub,
         });
 
-        const createdAuthor = await newAuthor.save();
+        const createdUser = await newUser.save();
 
         const accessToken = await createAccessToken({
-          _id: createdAuthor._id,
-          role: createdAuthor.role,
+          _id: createdUser._id,
+          role: createdUser.role,
         });
 
         passportNext(null, { accessToken });
