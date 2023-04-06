@@ -8,8 +8,28 @@ import {
   createTokens,
   verifyTokenAndCreateNewToken,
 } from "../../lib/auth/tools.js";
+import passport from "passport";
 
 const authorsRouter = Express.Router();
+
+authorsRouter.get(
+  "/googleLogin",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+authorsRouter.get(
+  "googleRedirect",
+  passport.authenticate("google", { session: false }),
+  (req, res, next) => {
+    try {
+      res.redirect(
+        `${process.env.FE_DEV_URL}?accessToken=${req.author.accessToken}`
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 authorsRouter.get("/", JWTAuthMiddleware, adminOnly, async (req, res, next) => {
   try {

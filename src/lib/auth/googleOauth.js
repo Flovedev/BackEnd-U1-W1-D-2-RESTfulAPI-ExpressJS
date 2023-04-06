@@ -6,7 +6,7 @@ const googleStragegy = new GoogleStragegy(
   {
     clientID: process.env.GOOGLE_ID,
     clientSecret: process.env.GOOGLE_SECRET,
-    callbackURL: `${process.env.API_URL}/users/googleRedirect`,
+    callbackURL: `${process.env.API_URL}/authors/googleRedirect`,
   },
   async (_, __, profile, passportNext) => {
     try {
